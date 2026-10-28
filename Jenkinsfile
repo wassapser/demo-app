@@ -46,7 +46,7 @@ pipeline {
     }
     post {
         always {
-            junit 'result.xml'
+            junit allowEmptyResults: true, testResults: 'result.xml'
         }
         success {
             echo 'Сборка прошла успешно, Quality Gate пройден'
