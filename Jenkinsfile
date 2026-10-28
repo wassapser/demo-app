@@ -55,7 +55,13 @@ pipeline {
 
     post {
         always {
-            junit 'result.xml'
+            // Эта строчка выполнится только ЕСЛИ шаг Test успел создать файл result.xml
+            // Чтобы сборка не падала, если теста еще не было, мы проверяем его наличие
+            script {
+                if (fileExists('result.xml')) {
+                    junit 'result.xml'
+                }
+            }
         }
         success {
             echo 'Сборка прошла успешно, Quality Gate пройден'
