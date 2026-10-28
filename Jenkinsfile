@@ -1,17 +1,21 @@
 pipeline {
     agent any
+
     options {
         timestamps()
     }
+
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
     }
+
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
+
         stage('Setup') {
             steps {
                 sh 'python3 -m venv venv'
@@ -19,16 +23,20 @@ pipeline {
                 sh './venv/bin/pip install -r requirements.txt'
             }
         }
+
         stage('Build') {
             steps {
                 sh './venv/bin/python -m py_compile app.py'
             }
         }
+
         stage('Test') {
             steps {
+                // Обратите внимание на двойные дефисы перед junitxml и cov
                 sh './venv/bin/pytest --junitxml=result.xml --cov=app --cov-report=xml:coverage.xml'
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
@@ -36,6 +44,7 @@ pipeline {
                 }
             }
         }
+
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
@@ -43,9 +52,11 @@ pipeline {
                 }
             }
         }
-    }
+    } // Конец блока stages. Похоже, в вашем файле эта скобка стояла выше!
+
     post {
         always {
+            // Добавлена опция allowEmptyResults, чтобы сборка не падала, если тесты не сгенерируют отчет
             junit allowEmptyResults: true, testResults: 'result.xml'
         }
         success {
