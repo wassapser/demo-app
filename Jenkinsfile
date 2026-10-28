@@ -32,7 +32,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Обратите внимание на двойные дефисы перед junitxml и cov
                 sh './venv/bin/pytest --junitxml=result.xml --cov=app --cov-report=xml:coverage.xml'
             }
         }
@@ -52,11 +51,10 @@ pipeline {
                 }
             }
         }
-    } // Конец блока stages. Похоже, в вашем файле эта скобка стояла выше!
+    }
 
     post {
         always {
-            // Добавлена опция allowEmptyResults, чтобы сборка не падала, если тесты не сгенерируют отчет
             junit allowEmptyResults: true, testResults: 'result.xml'
         }
         success {
